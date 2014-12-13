@@ -22,6 +22,8 @@
 {
     if (self = [super initWithCoder:aDecoder]){
         self.backgroundColor = [UIColor redColor];
+        self.layer.cornerRadius = 4;
+        self.clipsToBounds = YES;
     }
     return self;
 }
