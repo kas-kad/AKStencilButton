@@ -62,7 +62,6 @@
     [text drawAtPoint:center withAttributes:@{NSFontAttributeName:font}];
     UIImage* viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    CFRelease(ctx);
     
     CGImageRef img = [self invertedAlpha:viewImage.CGImage];
     CALayer *maskLayer = [CALayer layer];
