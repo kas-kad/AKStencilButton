@@ -21,18 +21,22 @@
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]){
-        self.backgroundColor = [UIColor redColor];
-        self.layer.cornerRadius = 4;
-        self.clipsToBounds = YES;
+        [self setupDefaults]
     }
     return self;
 }
 -(instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]){
-        self.backgroundColor = [UIColor redColor];
+        [self setupDefaults];
     }
     return self;
+}
+-(void)setupDefaults
+{
+    self.backgroundColor = [UIColor redColor];
+    self.layer.cornerRadius = 4;
+    self.clipsToBounds = YES;
 }
 -(void)layoutSubviews
 {
