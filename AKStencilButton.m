@@ -60,48 +60,21 @@
     
     UIGraphicsBeginImageContextWithOptions(buttonSize, NO, [[UIScreen mainScreen] scale]);
     CGContextRef ctx = UIGraphicsGetCurrentContext();
-    CGContextSetStrokeColorWithColor(ctx, [UIColor blackColor].CGColor);
-    CGContextSetFillColorWithColor(ctx, [UIColor clearColor].CGColor);
+    CGContextSetFillColorWithColor(ctx, [UIColor whiteColor].CGColor);
     CGPoint center = CGPointMake(buttonSize.width/2-textSize.width/2, buttonSize.height/2-textSize.height/2);
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, buttonSize.width, buttonSize.height)];
+    CGContextAddPath(ctx, path.CGPath);
+    CGContextFillPath(ctx);
+    CGContextSetBlendMode(ctx, kCGBlendModeDestinationOut);
+    
     [text drawAtPoint:center withAttributes:@{NSFontAttributeName:font}];
     UIImage* viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    CGImageRef img = [self invertedAlpha:viewImage.CGImage];
     CALayer *maskLayer = [CALayer layer];
-    maskLayer.contents = CFBridgingRelease(img);
+    maskLayer.contents = (__bridge id)(viewImage.CGImage);
     maskLayer.frame = self.bounds;
     self.layer.mask = maskLayer;
-}
-
--(CGImageRef)invertedAlpha:(CGImageRef)originalMaskImage
-{
-#define ROUND_UP(N, S) ((((N) + (S) - 1) / (S)) * (S))
-    float width = CGImageGetWidth(originalMaskImage);
-    float height = CGImageGetHeight(originalMaskImage);
-    
-    int strideLength = ROUND_UP(width * 1, 4);
-    unsigned char * alphaData = calloc(strideLength * height, sizeof(unsigned char));
-    CGContextRef alphaOnlyContext = CGBitmapContextCreate(alphaData,
-                                                          width,
-                                                          height,
-                                                          8,
-                                                          strideLength,
-                                                          NULL,
-                                                          (CGBitmapInfo)kCGImageAlphaOnly);
-    CGContextDrawImage(alphaOnlyContext, CGRectMake(0, 0, width, height), originalMaskImage);
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            unsigned char val = alphaData[y*strideLength + x];
-            val = 255 - val;
-            alphaData[y*strideLength + x] = val;
-        }
-    }
-    
-    CGImageRef alphaMaskImage = CGBitmapContextCreateImage(alphaOnlyContext);
-    CGContextRelease(alphaOnlyContext);
-    free(alphaData);
-    
-    return alphaMaskImage;
 }
 @end
