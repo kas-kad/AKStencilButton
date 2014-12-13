@@ -10,8 +10,6 @@
 
 @interface AKStencilButton ()
 {
-    UIView * _maskingView;
-    UIView * _bgView;
     UIColor * _buttonColor;
 }
 @end
@@ -21,7 +19,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]){
-        [self setupDefaults]
+        [self setupDefaults];
     }
     return self;
 }
@@ -58,7 +56,7 @@
     
     NSDictionary* attribs = @{NSFontAttributeName: self.titleLabel.font};
     CGSize textSize = [text sizeWithAttributes:attribs];
-
+    
     
     UIGraphicsBeginImageContextWithOptions(buttonSize, NO, [[UIScreen mainScreen] scale]);
     CGContextRef ctx = UIGraphicsGetCurrentContext();
@@ -73,28 +71,9 @@
     CALayer *maskLayer = [CALayer layer];
     maskLayer.contents = CFBridgingRelease(img);
     maskLayer.frame = self.bounds;
-    
-    if (!_maskingView){
-        _maskingView = [[UIView alloc] initWithFrame:self.bounds];
-        _maskingView.userInteractionEnabled = NO;
-        _maskingView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        _maskingView.backgroundColor = [UIColor clearColor];
-        
-        _bgView = [[UIView alloc] initWithFrame:_maskingView.bounds];
-        _bgView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        _bgView.userInteractionEnabled = NO;
-        [_maskingView addSubview:_bgView];
-        [self addSubview:_maskingView];
-    }
-    _bgView.backgroundColor = _buttonColor;
-    _maskingView.layer.mask = maskLayer;
-    [_maskingView setNeedsLayout];
+    self.layer.mask = maskLayer;
 }
--(void)setBackgroundColor:(UIColor *)backgroundColor
-{
-    [super setBackgroundColor:[UIColor clearColor]];
-    _buttonColor = backgroundColor;
-}
+
 -(CGImageRef)invertedAlpha:(CGImageRef)originalMaskImage
 {
 #define ROUND_UP(N, S) ((((N) + (S) - 1) / (S)) * (S))
